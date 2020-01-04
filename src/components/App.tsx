@@ -15,7 +15,7 @@ export default function App() {
         const dx = 2;
         const dy = -2;
 
-        const intervalId = window.setInterval(() => {
+        const draw = () => {
           context.clearRect(0, 0, canvas.width, canvas.height);
 
           context.beginPath();
@@ -26,9 +26,11 @@ export default function App() {
 
           x += dx;
           y += dy;
-        }, 10);
 
-        return () => window.clearInterval(intervalId);
+          window.requestAnimationFrame(draw);
+        };
+
+        window.requestAnimationFrame(draw);
       }
     }
   }, []);

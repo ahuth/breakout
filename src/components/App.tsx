@@ -15,14 +15,17 @@ export default function App() {
         const dx = 2;
         const dy = -2;
 
-        const draw = () => {
-          context.clearRect(0, 0, canvas.width, canvas.height);
-
+        const drawBall = () => {
           context.beginPath();
           context.arc(x, y, 10, 0, Math.PI * 2);
           context.fillStyle = '#0095DD';
           context.fill();
           context.closePath();
+        };
+
+        const draw = () => {
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          drawBall();
 
           x += dx;
           y += dy;

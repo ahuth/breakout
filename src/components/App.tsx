@@ -5,20 +5,28 @@ export default function App() {
 
   useEffect(() => {
     if (canvasRef.current) {
-      const context = canvasRef.current.getContext('2d');
+      const canvas = canvasRef.current;
+      const context = canvas.getContext('2d');
 
       if (context) {
-        context.beginPath();
-        context.rect(20, 40, 50, 50);
-        context.fillStyle = '#FF0000';
-        context.fill();
-        context.closePath();
+        let x = canvas.width / 2;
+        let y = canvas.height - 30;
 
-        context.beginPath();
-        context.arc(240, 160, 20, 0, Math.PI * 2, false);
-        context.fillStyle = 'green';
-        context.fill();
-        context.closePath();
+        const dx = 2;
+        const dy = -2;
+
+        const intervalId = window.setInterval(() => {
+          context.beginPath();
+          context.arc(x, y, 10, 0, Math.PI * 2);
+          context.fillStyle = '#0095DD';
+          context.fill();
+          context.closePath();
+
+          x += dx;
+          y += dy;
+        }, 10);
+
+        return () => window.clearInterval(intervalId);
       }
     }
   }, []);

@@ -68,9 +68,14 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
       if (y + dy < ballRadius) {
         dy = -dy;
       } else if (y + dy > canvas.height - ballRadius) {
-        window.clearInterval(animationFrameId);
-        alert('GAME OVER');
-        document.location.reload();
+        if (x > paddleX && x < paddleX + paddleWidth) {
+          dy = -dy;
+        }
+        else {
+          window.clearInterval(animationFrameId);
+          alert('GAME OVER');
+          document.location.reload();
+        }
       }
 
       x += dx;

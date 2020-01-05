@@ -21,6 +21,23 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
     let dx = 2;
     let dy = -2;
 
+    let brickRowCount = 3;
+    let brickColumnCount = 5;
+    let brickWidth = 75;
+    let brickHeight = 20;
+    let brickPadding = 10;
+    let brickOffsetTop = 30;
+    let brickOffsetLeft = 30;
+
+    const bricks: Array<Array<{ x: number, y: number}>> = [];
+
+    for (let c = 0; c < brickColumnCount; c++) {
+      bricks[c] = [];
+      for (let r = 0; r < brickRowCount; r++) {
+        bricks[c][r] = { x: 0, y: 0 };
+      }
+    }
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Right' || e.key === 'ArrowRight') {
         rightPressed = true;
@@ -55,11 +72,29 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
       context.closePath();
     };
 
+    const drawBricks = () => {
+      for (let c = 0; c < brickColumnCount; c++) {
+        for (let r = 0; r < brickRowCount; r++) {
+          const brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+          const brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+
+          bricks[c][r].x = brickX;
+          bricks[c][r].y = brickY;
+          context.beginPath();
+          context.rect(brickX, brickY, brickWidth, brickHeight);
+          context.fillStyle = '#0095DD';
+          context.fill();
+          context.closePath();
+        }
+      }
+    };
+
     const draw = () => {
       context.clearRect(0, 0, canvas.width, canvas.height);
 
       drawBall();
       drawPaddle();
+      drawBricks();
 
       if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
         dx = -dx;

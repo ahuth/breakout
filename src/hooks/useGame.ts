@@ -64,8 +64,13 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
       if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
         dx = -dx;
       }
-      if (y + dy > canvas.height - ballRadius || y + dy < ballRadius) {
+
+      if (y + dy < ballRadius) {
         dy = -dy;
+      } else if (y + dy > canvas.height - ballRadius) {
+        window.clearInterval(animationFrameId);
+        alert('GAME OVER');
+        document.location.reload();
       }
 
       x += dx;

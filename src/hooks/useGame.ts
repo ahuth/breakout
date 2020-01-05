@@ -5,6 +5,8 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
     const canvas = canvasRef.current!;
     const context = canvas.getContext('2d')!;
 
+    let animationFrameId = -1;
+
     let rightPressed = false;
     let leftPressed = false;
 
@@ -81,17 +83,18 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
         }
       }
 
-      window.requestAnimationFrame(draw);
+      animationFrameId = window.requestAnimationFrame(draw);
     };
 
     document.addEventListener('keydown', handleKeyDown, false);
     document.addEventListener('keyup', handleKeyUp, false);
 
-    window.requestAnimationFrame(draw);
+    animationFrameId = window.requestAnimationFrame(draw);
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown, false);
       document.removeEventListener('keyup', handleKeyUp, false);
+      window.cancelAnimationFrame(animationFrameId);
     };
   }, [canvasRef]);
 }

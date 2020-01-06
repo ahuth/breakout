@@ -29,12 +29,12 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
     let brickOffsetTop = 30;
     let brickOffsetLeft = 30;
 
-    const bricks: Array<Array<{ x: number, y: number}>> = [];
+    const bricks: Array<Array<{ x: number, y: number, status: number}>> = [];
 
     for (let c = 0; c < brickColumnCount; c++) {
       bricks[c] = [];
       for (let r = 0; r < brickRowCount; r++) {
-        bricks[c][r] = { x: 0, y: 0 };
+        bricks[c][r] = { x: 0, y: 0, status: 1 };
       }
     }
 
@@ -60,8 +60,11 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
       for (let c = 0; c < brickColumnCount; c++) {
         for (let r = 0; r < brickRowCount; r++) {
           const b = bricks[c][r];
-          if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
-            dy = -dy;
+          if (b.status === 1) {
+            if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+              dy = -dy;
+              b.status = 0;
+            }
           }
         }
       }
@@ -86,16 +89,18 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
     const drawBricks = () => {
       for (let c = 0; c < brickColumnCount; c++) {
         for (let r = 0; r < brickRowCount; r++) {
-          const brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
-          const brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+          if (bricks[c][r].status === 1) {
+            const brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+            const brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
 
-          bricks[c][r].x = brickX;
-          bricks[c][r].y = brickY;
-          context.beginPath();
-          context.rect(brickX, brickY, brickWidth, brickHeight);
-          context.fillStyle = '#0095DD';
-          context.fill();
-          context.closePath();
+            bricks[c][r].x = brickX;
+            bricks[c][r].y = brickY;
+            context.beginPath();
+            context.rect(brickX, brickY, brickWidth, brickHeight);
+            context.fillStyle = '#0095DD';
+            context.fill();
+            context.closePath();
+          }
         }
       }
     };

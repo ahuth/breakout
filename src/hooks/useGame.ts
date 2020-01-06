@@ -56,6 +56,17 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
       }
     };
 
+    const collisionDetection = () => {
+      for (let c = 0; c < brickColumnCount; c++) {
+        for (let r = 0; r < brickRowCount; r++) {
+          const b = bricks[c][r];
+          if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+            dy = -dy;
+          }
+        }
+      }
+    };
+
     const drawBall = () => {
       context.beginPath();
       context.arc(x, y, ballRadius, 0, Math.PI * 2);
@@ -95,6 +106,7 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
       drawBall();
       drawPaddle();
       drawBricks();
+      collisionDetection();
 
       if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
         dx = -dx;

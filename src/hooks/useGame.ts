@@ -1,20 +1,19 @@
 import React, { useEffect } from 'react';
 import * as Ball from '../utils/ball';
+import * as Paddle from '../utils/paddle';
 
 export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): void {
   useEffect(() => {
     const canvas = canvasRef.current!;
     const context = canvas.getContext('2d')!;
+
     let ball = Ball.create(canvas.width / 2, canvas.height - 30);
+    let paddle = Paddle.create(canvas.width);
 
     let animationFrameId = -1;
 
     let rightPressed = false;
     let leftPressed = false;
-
-    const paddleHeight = 10;
-    const paddleWidth = 75;
-    let paddleX = (canvas.width - paddleWidth) / 2;
 
     let brickRowCount = 3;
     let brickColumnCount = 5;
@@ -65,14 +64,6 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
       }
     };
 
-    const drawPaddle = () => {
-      context.beginPath();
-      context.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
-      context.fillStyle = '#0095DD';
-      context.fill();
-      context.closePath();
-    };
-
     const drawBricks = () => {
       for (let c = 0; c < brickColumnCount; c++) {
         for (let r = 0; r < brickRowCount; r++) {
@@ -96,7 +87,7 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
       context.clearRect(0, 0, canvas.width, canvas.height);
 
       Ball.draw(ball, context);
-      drawPaddle();
+      Paddle.draw(paddle, context);
       drawBricks();
       collisionDetection();
 
@@ -107,7 +98,7 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
       if (ball.y + ball.dy < ball.radius) {
         ball = Ball.bounceY(ball);
       } else if (ball.y + ball.dy > canvas.height - ball.radius) {
-        if (ball.x > paddleX && ball.x < paddleX + paddleWidth) {
+        if (ball.x > paddle.x && ball.x < paddle.x + paddle.width) {
           ball = Ball.bounceY(ball);
         } else {
           window.clearInterval(animationFrameId);
@@ -119,14 +110,16 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
       ball = Ball.move(ball);
 
       if (rightPressed) {
-        paddleX += 7;
-        if (paddleX + paddleWidth > canvas.width) {
-          paddleX = canvas.width - paddleWidth;
+        paddle = Paddle.moveRight(paddle, 7);
+
+        if (paddle.x + paddle.width > canvas.width) {
+          paddle = Paddle.setX(paddle, canvas.width - paddle.width);
         }
       } else if (leftPressed) {
-        paddleX -= 7;
-        if (paddleX < 0) {
-          paddleX = 0;
+        paddle = Paddle.moveLeft(paddle, 7);
+
+        if (paddle.x < 0) {
+          paddle = Paddle.setX(paddle, 0);
         }
       }
 

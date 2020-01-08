@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import * as Ball from '../utils/ball';
+import * as Brick from '../utils/brick';
 import * as Paddle from '../utils/paddle';
 
 export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): void {
@@ -23,12 +24,15 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
     let brickOffsetTop = 30;
     let brickOffsetLeft = 30;
 
-    const bricks: Array<Array<{ x: number, y: number, status: number}>> = [];
+    const bricks: Array<Array<Brick.Type>> = [];
 
     for (let c = 0; c < brickColumnCount; c++) {
       bricks[c] = [];
       for (let r = 0; r < brickRowCount; r++) {
-        bricks[c][r] = { x: 0, y: 0, status: 1 };
+        const brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
+        const brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
+
+        bricks[c][r] = Brick.create(brickX, brickY, brickWidth);
       }
     }
 
@@ -53,11 +57,11 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
     const collisionDetection = () => {
       for (let c = 0; c < brickColumnCount; c++) {
         for (let r = 0; r < brickRowCount; r++) {
-          const b = bricks[c][r];
-          if (b.status === 1) {
-            if (ball.x > b.x && ball.x < b.x + brickWidth && ball.y > b.y && ball.y < b.y + brickHeight) {
+          let brick = bricks[c][r];
+          if (Brick.isPresent(brick)) {
+            if (ball.x > brick.x && ball.x < brick.x + brick.width && ball.y > brick.y && ball.y < brick.y + brickHeight) {
               ball = Ball.bounceY(ball);
-              b.status = 0;
+              brick = Brick.bust(brick);
             }
           }
         }
@@ -67,18 +71,7 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
     const drawBricks = () => {
       for (let c = 0; c < brickColumnCount; c++) {
         for (let r = 0; r < brickRowCount; r++) {
-          if (bricks[c][r].status === 1) {
-            const brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
-            const brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
-
-            bricks[c][r].x = brickX;
-            bricks[c][r].y = brickY;
-            context.beginPath();
-            context.rect(brickX, brickY, brickWidth, brickHeight);
-            context.fillStyle = '#0095DD';
-            context.fill();
-            context.closePath();
-          }
+          Brick.draw(bricks[c][r], context);
         }
       }
     };

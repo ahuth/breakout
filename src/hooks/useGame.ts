@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import * as Ball from '../utils/ball';
 import * as Brick from '../utils/brick';
 import * as Paddle from '../utils/paddle';
+import * as Wall from '../utils/wall';
 
 export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): void {
   useEffect(() => {
@@ -10,31 +11,12 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
 
     let ball = Ball.create(canvas.width / 2, canvas.height - 30);
     let paddle = Paddle.create(canvas.width);
+    let wall = Wall.create(3, 5, 75, 20, 10, 30, 30);
 
     let animationFrameId = -1;
 
     let rightPressed = false;
     let leftPressed = false;
-
-    let brickRowCount = 3;
-    let brickColumnCount = 5;
-    let brickWidth = 75;
-    let brickHeight = 20;
-    let brickPadding = 10;
-    let brickOffsetTop = 30;
-    let brickOffsetLeft = 30;
-
-    const bricks: Array<Array<Brick.Type>> = [];
-
-    for (let c = 0; c < brickColumnCount; c++) {
-      bricks[c] = [];
-      for (let r = 0; r < brickRowCount; r++) {
-        const brickX = (c * (brickWidth + brickPadding)) + brickOffsetLeft;
-        const brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
-
-        bricks[c][r] = Brick.create(brickX, brickY, brickWidth);
-      }
-    }
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Right' || e.key === 'ArrowRight') {
@@ -55,25 +37,14 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
     };
 
     const collisionDetection = () => {
-      for (let c = 0; c < brickColumnCount; c++) {
-        for (let r = 0; r < brickRowCount; r++) {
-          let brick = bricks[c][r];
-          if (Brick.isPresent(brick)) {
-            if (ball.x > brick.x && ball.x < brick.x + brick.width && ball.y > brick.y && ball.y < brick.y + brickHeight) {
-              ball = Ball.bounceY(ball);
-              brick = Brick.bust(brick);
-            }
+      Wall.forEachBrick(wall, function (brick) {
+        if (Brick.isPresent(brick)) {
+          if (ball.x > brick.x && ball.x < brick.x + brick.width && ball.y > brick.y && ball.y < brick.y + brick.height) {
+            ball = Ball.bounceY(ball);
+            brick = Brick.bust(brick);
           }
         }
-      }
-    };
-
-    const drawBricks = () => {
-      for (let c = 0; c < brickColumnCount; c++) {
-        for (let r = 0; r < brickRowCount; r++) {
-          Brick.draw(bricks[c][r], context);
-        }
-      }
+      });
     };
 
     const draw = () => {
@@ -81,7 +52,8 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
 
       Ball.draw(ball, context);
       Paddle.draw(paddle, context);
-      drawBricks();
+      Wall.draw(wall, context);
+
       collisionDetection();
 
       if (ball.x + ball.dx > canvas.width - ball.radius || ball.x + ball.dx < ball.radius) {

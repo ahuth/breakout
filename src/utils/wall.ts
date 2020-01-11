@@ -27,14 +27,14 @@ export function create(
   return bricks;
 }
 
-export function forEachBrick(wall: Wall, callback: (brick: Brick.Type) => void): void {
-  wall.forEach(function (brick) {
-    callback(brick);
+export function mapBricks<T>(wall: Wall, callback: (brick: Brick.Type) => T): T[] {
+  return wall.map(function (brick) {
+    return callback(brick);
   });
 }
 
 export function draw(wall: Wall, context: CanvasRenderingContext2D): void {
-  forEachBrick(wall, function (brick) {
+  mapBricks(wall, function (brick) {
     Brick.draw(brick, context);
   });
 }

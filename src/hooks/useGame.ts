@@ -37,13 +37,14 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
     };
 
     const collisionDetection = () => {
-      Wall.forEachBrick(wall, function (brick) {
+      wall = Wall.mapBricks(wall, function (brick) {
         if (Brick.isPresent(brick)) {
           if (ball.x > brick.x && ball.x < brick.x + brick.width && ball.y > brick.y && ball.y < brick.y + brick.height) {
             ball = Ball.bounceY(ball);
             brick = Brick.bust(brick);
           }
         }
+        return brick;
       });
     };
 

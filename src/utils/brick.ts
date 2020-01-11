@@ -17,8 +17,10 @@ export function isPresent(brick: Brick): boolean {
 }
 
 export function bust(brick: Brick): Brick {
-  brick.status = 0;
-  return brick;
+  return {
+    ...brick,
+    status: 0,
+  };
 }
 
 export function draw(brick: Brick, context: CanvasRenderingContext2D): void {

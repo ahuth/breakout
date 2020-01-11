@@ -16,18 +16,24 @@ export function create(screenWidth: number): Paddle {
 }
 
 export function moveRight(paddle: Paddle, amount: number): Paddle {
-  paddle.x += amount;
-  return paddle;
+  return {
+    ...paddle,
+    x: paddle.x += amount,
+  };
 }
 
 export function moveLeft(paddle: Paddle, amount: number): Paddle {
-  paddle.x -= amount;
-  return paddle;
+  return {
+    ...paddle,
+    x: paddle.x -= amount,
+  };
 }
 
 export function setX(paddle: Paddle, x: number): Paddle {
-  paddle.x = x;
-  return paddle;
+  return {
+    ...paddle,
+    x,
+  };
 }
 
 export function draw(paddle: Paddle, context: CanvasRenderingContext2D): void {

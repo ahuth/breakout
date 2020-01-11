@@ -17,19 +17,25 @@ export function create(x: number, y: number): Ball {
 }
 
 export function move(ball: Ball): Ball {
-  ball.x += ball.dx;
-  ball.y += ball.dy;
-  return ball;
+  return {
+    ...ball,
+    x: ball.x += ball.dx,
+    y: ball.y += ball.dy,
+  };
 }
 
 export function bounceX(ball: Ball): Ball {
-  ball.dx *= -1;
-  return ball;
+  return {
+    ...ball,
+    dx: ball.dx *= -1,
+  };
 }
 
 export function bounceY(ball: Ball): Ball {
-  ball.dy *= -1;
-  return ball;
+  return {
+    ...ball,
+    dy: ball.dy *= -1,
+  };
 }
 
 export function draw(ball: Ball, context: CanvasRenderingContext2D): void {

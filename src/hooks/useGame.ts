@@ -48,7 +48,7 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
       });
     };
 
-    const draw = () => {
+    const processFrame = () => {
       context.clearRect(0, 0, canvas.width, canvas.height);
 
       Ball.draw(ball, context);
@@ -89,13 +89,13 @@ export default function useGame(canvasRef: React.RefObject<HTMLCanvasElement>): 
         }
       }
 
-      animationFrameId = window.requestAnimationFrame(draw);
+      animationFrameId = window.requestAnimationFrame(processFrame);
     };
 
     document.addEventListener('keydown', handleKeyDown, false);
     document.addEventListener('keyup', handleKeyUp, false);
 
-    animationFrameId = window.requestAnimationFrame(draw);
+    animationFrameId = window.requestAnimationFrame(processFrame);
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown, false);
